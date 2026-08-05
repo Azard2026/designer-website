@@ -12,7 +12,7 @@ from app.schemas import SettingsBulkUpdate
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 
 @router.get("", response_model=Dict[str, str])
 def get_all_settings(db: Session = Depends(get_db)):
@@ -42,8 +42,7 @@ def upload_image_setting(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Could not save file: {e}")
 
-    # Generate URL (relative for the frontend to append backend base URL or use directly if proxy is setup)
-    file_url = f"http://localhost:8000/uploads/{safe_filename}"
+    file_url = f"/uploads/{safe_filename}"
 
     # Update or insert setting
     setting = db.query(Setting).filter(Setting.key == key).first()

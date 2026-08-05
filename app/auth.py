@@ -14,7 +14,11 @@ from app.models import User, Role, Permission
 load_dotenv()
 
 # JWT Config
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "luxe_interior_super_secret_design_key_987654321")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    if os.getenv("ENVIRONMENT", "development") == "production":
+        raise RuntimeError("JWT_SECRET_KEY must be set in production.")
+    SECRET_KEY = "development-only-change-me"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 REFRESH_TOKEN_EXPIRE_DAYS = 7

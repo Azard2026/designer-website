@@ -191,7 +191,7 @@ def upload_portfolio_media(
     db: Session = Depends(get_db)
 ):
     """Upload portfolio image or video and return URL"""
-    UPLOAD_DIR = "uploads"
+    UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
     if not os.path.exists(UPLOAD_DIR):
         os.makedirs(UPLOAD_DIR)
 
@@ -209,6 +209,5 @@ def upload_portfolio_media(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Could not save file: {e}")
 
-    file_url = f"http://localhost:8000/uploads/{safe_filename}"
+    file_url = f"/uploads/{safe_filename}"
     return {"url": file_url}
-
