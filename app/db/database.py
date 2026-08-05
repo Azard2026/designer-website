@@ -8,7 +8,7 @@ load_dotenv()
 
 # MySQL is required in production. SQLite remains available only for local
 # development when DATABASE_URL is explicitly set to a sqlite URL.
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./designer_website.db")
+DATABASE_URL = "mysql+pymysql://designer:Password@123@localhost/designer_db"
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(DATABASE_URL, connect_args=connect_args, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
