@@ -15,7 +15,7 @@ app = FastAPI(
 )
 
 # The production site and API share one domain through the reverse proxy.
-cors_origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
+cors_origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://43.204.238.189").split(",") if origin.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
