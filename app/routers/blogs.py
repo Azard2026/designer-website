@@ -4,6 +4,7 @@ from typing import List, Optional
 import re
 import os
 import shutil
+import uuid
 from datetime import datetime
 
 from app.db.database import get_db
@@ -196,11 +197,12 @@ def upload_portfolio_media(
         os.makedirs(UPLOAD_DIR)
 
     # Accept images and videos
-    if not (file.content_type.startswith("image/") or file.content_type.startswith("video/")):
+    content_type = file.content_type or ""
+    if not (content_type.startswith("image/") or content_type.startswith("video/")):
         raise HTTPException(status_code=400, detail="File must be an image or video.")
 
-    ext = file.filename.split(".")[-1]
-    safe_filename = f"portfolio_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}.{ext}"
+    ext = (file.filename or "bin").rsplit(".", 1)[-1].lower()
+    safe_filename = f"portfolio_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}.{ext}"
     file_path = os.path.join(UPLOAD_DIR, safe_filename)
 
     try:

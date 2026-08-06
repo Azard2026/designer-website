@@ -70,6 +70,26 @@ def _seed_initial_data(db):
     db.commit()
 
 
+def _ensure_portfolio_columns(db):
+    """Add portfolio columns that may be missing on older databases."""
+    statements = []
+    if DATABASE_URL.startswith("sqlite"):
+        statements = [
+            "ALTER TABLE portfolio_items ADD COLUMN youtube_url VARCHAR(512)",
+        ]
+    else:
+        statements = [
+            "ALTER TABLE portfolio_items ADD COLUMN youtube_url VARCHAR(512) NULL",
+        ]
+
+    for statement in statements:
+        try:
+            db.execute(text(statement))
+            db.commit()
+        except Exception:
+            db.rollback()
+
+
 def init_db():
     # Importing models registers every table with SQLAlchemy metadata.
     import app.models  # noqa: F401
@@ -77,6 +97,7 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        _ensure_portfolio_columns(db)
         _seed_initial_data(db)
     except Exception:
         db.rollback()

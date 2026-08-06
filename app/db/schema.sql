@@ -200,6 +200,7 @@ CREATE TABLE portfolio_items (
     description TEXT,
     before_image_url VARCHAR(512),
     after_image_url VARCHAR(512),
+    youtube_url VARCHAR(512),
     budget_range VARCHAR(100),
     client_review TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
