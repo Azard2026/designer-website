@@ -18,11 +18,10 @@ INSERT INTO permissions (id, name, description) VALUES
 ON DUPLICATE KEY UPDATE id=id;
 
 -- Link Role permissions
-INSERT INTO role_permissions (role_id, permission_id) VALUES
-(1, 1), (1, 2), (1, 3), (1, 4), -- Admin gets all
-(2, 2), (2, 3), (2, 4),         -- Designer gets leads, projects, client interactions
-(3, 4)                          -- Client only gets portal access
-ON DUPLICATE KEY UPDATE id=id;
+INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES
+(1, 1), (1, 2), (1, 3), (1, 4),
+(2, 2), (2, 3), (2, 4),
+(3, 4);
 
 -- 3. Insert Users (password is hash of 'password123')
 INSERT INTO users (id, email, password_hash, full_name, phone, role_id, is_active) VALUES
