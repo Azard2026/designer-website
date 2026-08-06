@@ -66,10 +66,12 @@ INSERT INTO blogs (id, title, slug, summary, content, category, tags, author_id,
 ON DUPLICATE KEY UPDATE id=id;
 
 -- 10. Insert Settings
-INSERT INTO settings (id, key, value) VALUES
+INSERT INTO settings (id, `key`, value) VALUES
 (1, 'site_name', 'KELEBEK DESIGNERS'),
 (2, 'contact_email', 'contact@kelebekdesigners.com'),
 (3, 'contact_phone', '+91 98765 43210'),
 (4, 'office_address', 'KELEBEK DESIGNERS STUDIO, Architectural & Interior Spaces Plaza, India')
-ON DUPLICATE KEY UPDATE id=id;
+ON DUPLICATE KEY UPDATE
+`key` = VALUES(`key`),
+value = VALUES(value);
 
