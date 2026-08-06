@@ -43,12 +43,7 @@ ON DUPLICATE KEY UPDATE id=id;
 -- 5. Insert Leads (Starts empty for real client submissions)
 -- Leads will populate automatically as clients submit consultation forms on the website.
 
--- 6. Insert Follow-ups
-INSERT INTO followups (id, lead_id, followup_date, followup_type, notes, is_completed) VALUES
-(1, 1, CURRENT_TIMESTAMP + INTERVAL '1 hour', 'Call', 'Call Ananya to introduce design concepts and schedule site visit.', 0),
-(2, 3, CURRENT_TIMESTAMP - INTERVAL '1 day', 'Email', 'Send follow-up portfolio images of modular kitchens.', 0),
-(3, 2, CURRENT_TIMESTAMP + INTERVAL '2 days', 'Meeting', 'Onsite office layout measurement and 3D review.', 0)
-ON DUPLICATE KEY UPDATE id=id;
+
 
 -- 7. Insert Portfolio Items
 INSERT INTO portfolio_items (id, title, slug, category, description, before_image_url, after_image_url, budget_range, client_review) VALUES
