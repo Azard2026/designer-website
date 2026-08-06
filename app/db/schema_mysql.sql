@@ -208,7 +208,7 @@ CREATE TABLE portfolio_items (
 -- 15. Settings Table (Global Configs)
 CREATE TABLE settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    key VARCHAR(100) UNIQUE NOT NULL,
+    `key` VARCHAR(100) NOT NULL UNIQUE,
     value TEXT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
