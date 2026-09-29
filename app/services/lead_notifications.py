@@ -18,9 +18,9 @@ def send_lead_notification(
 ) -> None:
 	"""Send the business inbox an email about a newly created lead."""
 	host = os.getenv("SMTP_HOST", "smtp.gmail.com").strip()
-	username = os.getenv("SMTP_USERNAME", "").strip()
-	password = os.getenv("SMTP_PASSWORD", "")
-	recipient = os.getenv("LEAD_NOTIFICATION_EMAIL", "").strip()
+	username = os.getenv("SMTP_USERNAME", "kelebekdesigners@gmail.com").strip()
+	password = os.getenv("SMTP_PASSWORD", "zkvs wphh wyoe rkog")
+	recipient = os.getenv("LEAD_NOTIFICATION_EMAIL", "kelebekdesigners@gmail.com").strip()
 
 	if not all((host, username, password, recipient)):
 		logger.warning(
