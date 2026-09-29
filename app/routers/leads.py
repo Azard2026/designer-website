@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -7,6 +7,7 @@ from app.models import Lead, LeadSource, User
 from app.schemas import LeadCreate, LeadUpdate, LeadResponse, LeadSourceResponse
 from app.auth import get_current_user, RoleChecker
 from app.services.ai import analyze_and_score_lead
+from app.services.lead_notifications import send_lead_notification
 
 router = APIRouter(tags=["Leads Management"])
 
@@ -29,7 +30,11 @@ def get_leads(
     return db.query(Lead).order_by(Lead.created_at.desc()).all()
 
 @router.post("/leads", response_model=LeadResponse, status_code=status.HTTP_201_CREATED)
-def create_lead(lead_in: LeadCreate, db: Session = Depends(get_db)):
+def create_lead(
+    lead_in: LeadCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
     """
     Submit a lead from the marketing website or external triggers.
     Auto-scores and classifies with AI service.
@@ -63,6 +68,15 @@ def create_lead(lead_in: LeadCreate, db: Session = Depends(get_db)):
     db.add(lead)
     db.commit()
     db.refresh(lead)
+    background_tasks.add_task(
+        send_lead_notification,
+        name=lead.name,
+        email=lead.email,
+        phone=lead.phone,
+        source=source_name,
+        budget=lead.budget,
+        requirement=lead.requirement,
+    )
     return lead
 
 @router.get("/leads/{lead_id}", response_model=LeadResponse)
