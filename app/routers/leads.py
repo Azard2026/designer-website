@@ -1,10 +1,10 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.db.database import get_db
 from app.models import Lead, LeadSource, User
-from app.schemas import LeadCreate, LeadUpdate, LeadResponse, LeadSourceResponse
+from app.schemas import LeadCreate, LeadUpdate, LeadResponse, LeadCreateResponse, LeadSourceResponse
 from app.auth import get_current_user, RoleChecker
 from app.services.ai import analyze_and_score_lead
 from app.services.lead_notifications import send_lead_notification
@@ -29,10 +29,9 @@ def get_leads(
     """
     return db.query(Lead).order_by(Lead.created_at.desc()).all()
 
-@router.post("/leads", response_model=LeadResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/leads", response_model=LeadCreateResponse, status_code=status.HTTP_201_CREATED)
 def create_lead(
     lead_in: LeadCreate,
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
     """
@@ -68,8 +67,7 @@ def create_lead(
     db.add(lead)
     db.commit()
     db.refresh(lead)
-    background_tasks.add_task(
-        send_lead_notification,
+    mail_result = send_lead_notification(
         name=lead.name,
         email=lead.email,
         phone=lead.phone,
@@ -77,7 +75,10 @@ def create_lead(
         budget=lead.budget,
         requirement=lead.requirement,
     )
-    return lead
+    response = LeadResponse.model_validate(lead).model_dump()
+    response["email_sent"] = mail_result["sent"]
+    response["email_error"] = mail_result["error"]
+    return response
 
 @router.get("/leads/{lead_id}", response_model=LeadResponse)
 def get_lead_by_id(

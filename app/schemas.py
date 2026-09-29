@@ -79,6 +79,10 @@ class LeadResponse(LeadBase):
     class Config:
         from_attributes = True
 
+class LeadCreateResponse(LeadResponse):
+    email_sent: bool
+    email_error: Optional[str] = None
+
 # Followups schemas
 class FollowupBase(BaseModel):
     lead_id: int
