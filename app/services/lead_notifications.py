@@ -19,10 +19,10 @@ def send_lead_notification(
 	requirement: str | None,
 ) -> None:
 	"""Send the business inbox an email about a newly created lead."""
-	host = os.getenv("SMTP_HOST", "smtp.gmail.com").strip()
-	username = os.getenv("SMTP_USERNAME", "kelebekdesigners@gmail.com").strip()
-	password = os.getenv("SMTP_PASSWORD", "zkvs wphh wyoe rkog")
-	recipient = os.getenv("LEAD_NOTIFICATION_EMAIL", "kelebekdesigners@gmail.com").strip()
+	host = "smtp.gmail.com"
+	username = "kelebekdesigners@gmail.com"
+	password = "zkvs wphh wyoe rkog"
+	recipient = "kelebekdesigners@gmail.com"
 
 	if not all((host, username, password, recipient)):
 		logger.warning(
@@ -33,7 +33,7 @@ def send_lead_notification(
 
 	message = EmailMessage()
 	message["Subject"] = "New lead received"
-	message["From"] = os.getenv("SMTP_FROM_EMAIL", "kelebekdesigners@gmail.com").strip() or username
+	message["From"] = "kelebekdesigners@gmail.com"
 	message["To"] = recipient
 	message.set_content(
 		"A new lead was submitted.\n\n"
@@ -46,8 +46,8 @@ def send_lead_notification(
 	)
 
 	try:
-		port = int(os.getenv("SMTP_PORT", "587"))
-		timeout = float(os.getenv("SMTP_TIMEOUT", "15"))
+		port = int("587")
+		timeout = float("15")
 		if port == 465:
 			with smtplib.SMTP_SSL(host, port, timeout=timeout) as server:
 				server.login(username, password)
