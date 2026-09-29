@@ -21,11 +21,12 @@ def send_lead_notification(
 	"""Send a new-lead email and return its actual delivery result."""
 	host = "smtp.gmail.com"
 	username = "kelebekdesigners@gmail.com"
+	# App passwords shown by Google may contain spaces; remove them for SMTP AUTH.
 	password = "zkvs wphh wyoe rkog"
 	recipient = "kelebekdesigners@gmail.com"
 
-	if not all((host, username, password, recipient)):
-		error = "SMTP host, username, password, or recipient is not configured."
+	if not password:
+		error = "SMTP_PASSWORD is missing. Configure a current Google App Password."
 		logger.warning(
 			"Lead notification not sent: %s",
 			error,
@@ -47,8 +48,8 @@ def send_lead_notification(
 	)
 
 	try:
-		port = int("587")
-		timeout = float("15")
+		port = 587
+		timeout = 15.0
 		if port == 465:
 			with smtplib.SMTP_SSL(host, port, timeout=timeout) as server:
 				server.login(username, password)
@@ -70,8 +71,13 @@ def send_lead_notification(
 			return {"sent": False, "error": error}
 		logger.info("New-lead notification email sent to %s.", recipient)
 		return {"sent": True, "error": None}
-	except smtplib.SMTPAuthenticationError:
-		error = "SMTP authentication failed. Check the Gmail address and current Google App Password."
+	except smtplib.SMTPAuthenticationError as exc:
+		reply = exc.smtp_error.decode(errors="replace") if isinstance(exc.smtp_error, bytes) else str(exc.smtp_error)
+		error = f"SMTP authentication failed (code {exc.smtp_code}): {reply}"
+		logger.exception(error)
+		return {"sent": False, "error": error}
+	except smtplib.SMTPRecipientsRefused as exc:
+		error = f"SMTP rejected recipient: {exc.recipients}"
 		logger.exception(error)
 		return {"sent": False, "error": error}
 	except Exception as exc:
