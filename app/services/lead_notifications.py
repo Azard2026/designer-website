@@ -1,12 +1,17 @@
 import logging
-import os
 import smtplib
 from email.message import EmailMessage
-from dotenv import load_dotenv
-
-load_dotenv()
 
 logger = logging.getLogger(__name__)
+
+# Zoho Mail SMTP settings. Replace the password with a newly generated
+# Zoho app-specific password after revoking the one previously used here.
+SMTP_HOST = "smtp.zoho.in"
+SMTP_PORT = 465
+SMTP_USERNAME = "user@kelebekdesigners.in"
+SMTP_PASSWORD = "MZWfu2Hae4V7"
+SMTP_FROM = "user@kelebekdesigners.in"
+SMTP_TO = SMTP_USERNAME
 
 
 def send_lead_notification(
@@ -19,14 +24,8 @@ def send_lead_notification(
 	requirement: str | None,
 ) -> dict[str, str | bool | None]:
 	"""Send a new-lead email and return its actual delivery result."""
-	host = "smtp.zoho.in"
-	username = "user@kelebekdesigners.in"
-	# App passwords shown by Google may contain spaces; remove them for SMTP AUTH.
-	password = "MZWfu2Hae4V7"
-	recipient = "user@kelebekdesigners.in"
-
-	if not password:
-		error = "SMTP_PASSWORD is missing. Configure a current Google App Password."
+	if not SMTP_PASSWORD or SMTP_PASSWORD == "REPLACE_WITH_NEW_ZOHO_APP_PASSWORD":
+		error = "Set SMTP_PASSWORD to a newly generated Zoho app-specific password."
 		logger.warning(
 			"Lead notification not sent: %s",
 			error,
@@ -35,8 +34,8 @@ def send_lead_notification(
 
 	message = EmailMessage()
 	message["Subject"] = "New lead received"
-	message["From"] = "user@kelebekdesigners.in"
-	message["To"] = recipient
+	message["From"] = SMTP_FROM
+	message["To"] = SMTP_TO
 	message.set_content(
 		"A new lead was submitted.\n\n"
 		f"Name: {name}\n"
@@ -48,18 +47,17 @@ def send_lead_notification(
 	)
 
 	try:
-		port = 465
 		timeout = 15.0
-		if port == 465:
-			with smtplib.SMTP_SSL(host, port, timeout=timeout) as server:
-				server.login(username, password)
+		if SMTP_PORT == 465:
+			with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=timeout) as server:
+				server.login(SMTP_USERNAME, SMTP_PASSWORD)
 				refused = server.send_message(message)
 		else:
-			with smtplib.SMTP(host, port, timeout=timeout) as server:
+			with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=timeout) as server:
 				server.ehlo()
 				server.starttls()
 				server.ehlo()
-				server.login(username, password)
+				server.login(SMTP_USERNAME, SMTP_PASSWORD)
 				refused = server.send_message(message)
 		if refused:
 			rejected = ", ".join(
@@ -69,7 +67,7 @@ def send_lead_notification(
 			error = f"SMTP rejected recipient: {rejected}"
 			logger.error(error)
 			return {"sent": False, "error": error}
-		logger.info("New-lead notification email sent to %s.", recipient)
+		logger.info("New-lead notification email sent to %s.", SMTP_TO)
 		return {"sent": True, "error": None}
 	except smtplib.SMTPAuthenticationError as exc:
 		reply = exc.smtp_error.decode(errors="replace") if isinstance(exc.smtp_error, bytes) else str(exc.smtp_error)
