@@ -19,11 +19,11 @@ def send_lead_notification(
 	requirement: str | None,
 ) -> dict[str, str | bool | None]:
 	"""Send a new-lead email and return its actual delivery result."""
-	host = "smtp.gmail.com"
-	username = "kelebekdesigners@gmail.com"
+	host = "smtp.zoho.in"
+	username = "user@kelebekdesigners.in"
 	# App passwords shown by Google may contain spaces; remove them for SMTP AUTH.
-	password = "zkvs wphh wyoe rkog"
-	recipient = "kelebekdesigners@gmail.com"
+	password = "MZWfu2Hae4V7"
+	recipient = "user@kelebekdesigners.in"
 
 	if not password:
 		error = "SMTP_PASSWORD is missing. Configure a current Google App Password."
@@ -35,7 +35,7 @@ def send_lead_notification(
 
 	message = EmailMessage()
 	message["Subject"] = "New lead received"
-	message["From"] = "kelebekdesigners@gmail.com"
+	message["From"] = "user@kelebekdesigners.in"
 	message["To"] = recipient
 	message.set_content(
 		"A new lead was submitted.\n\n"
@@ -48,7 +48,7 @@ def send_lead_notification(
 	)
 
 	try:
-		port = 587
+		port = 465
 		timeout = 15.0
 		if port == 465:
 			with smtplib.SMTP_SSL(host, port, timeout=timeout) as server:
