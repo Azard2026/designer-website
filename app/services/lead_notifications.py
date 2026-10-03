@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 # Zoho Mail SMTP settings. Replace the password with a newly generated
 # Zoho app-specific password after revoking the one previously used here.
-SMTP_HOST = EMAIL_HOST
+SMTP_HOST = EMAIL_HOST_USER
 SMTP_PORT = EMAIL_PORT
-SMTP_USERNAME = EMAIL_PORT
-SMTP_PASSWORD = EMAIL_PORT
+SMTP_USERNAME = EMAIL_HOST_USER
+SMTP_PASSWORD = EMAIL_HOST_PASSWORD
 SMTP_FROM = EMAIL_HOST
 SMTP_TO = SMTP_USERNAME
 
