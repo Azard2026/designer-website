@@ -4,7 +4,7 @@ from email.message import EmailMessage
 import os
 
 EMAIL_HOST = os.getenv("zoho_smtp_host")
-EMAIL_PORT = int(os.getenv("zoho_smtp_port", 587))
+EMAIL_PORT = int(os.getenv("zoho_smtp_port", 465))
 EMAIL_HOST_USER = os.getenv("zoho_smtp_user")
 EMAIL_HOST_PASSWORD = os.getenv("zoho_smtp_password")
 
