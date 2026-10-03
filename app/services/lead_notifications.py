@@ -1,16 +1,22 @@
 import logging
 import smtplib
 from email.message import EmailMessage
+import os
+
+EMAIL_HOST = os.getenv("zoho_smtp_host")
+EMAIL_PORT = int(os.getenv("zoho_smtp_port", 587))
+EMAIL_HOST_USER = os.getenv("zoho_smtp_user")
+EMAIL_HOST_PASSWORD = os.getenv("zoho_smtp_password")
 
 logger = logging.getLogger(__name__)
 
 # Zoho Mail SMTP settings. Replace the password with a newly generated
 # Zoho app-specific password after revoking the one previously used here.
-SMTP_HOST = "smtp.zoho.in"
-SMTP_PORT = 465
-SMTP_USERNAME = "user@kelebekdesigners.in"
-SMTP_PASSWORD = "MZWfu2Hae4V7"
-SMTP_FROM = "user@kelebekdesigners.in"
+SMTP_HOST = EMAIL_HOST
+SMTP_PORT = EMAIL_PORT
+SMTP_USERNAME = EMAIL_PORT
+SMTP_PASSWORD = EMAIL_PORT
+SMTP_FROM = EMAIL_HOST
 SMTP_TO = SMTP_USERNAME
 
 
